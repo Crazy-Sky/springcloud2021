@@ -12,6 +12,7 @@
     <artifactId>cloud-api-commons</artifactId>
 
     <dependencies>
+        <!--一般通用配置-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
