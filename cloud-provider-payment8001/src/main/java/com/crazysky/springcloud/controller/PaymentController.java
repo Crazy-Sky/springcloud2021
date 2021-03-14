@@ -34,7 +34,7 @@ public class PaymentController {
         if (result > 0) {
             return new CommonResult<>(200, "插入成功", result);
         }
-        return new CommonResult<>(200, "插入失败");
+        return new CommonResult(444, "插入失败");
     }
 
     /**
@@ -51,6 +51,6 @@ public class PaymentController {
         if (payment != null) {
             return new CommonResult<>(200, "查询成功", payment);
         }
-        return new CommonResult<>(200, "查询失败");
+        return new CommonResult(444, "查询失败");
     }
 }
