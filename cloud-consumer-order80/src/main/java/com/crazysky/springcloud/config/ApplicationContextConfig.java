@@ -20,7 +20,7 @@ public class ApplicationContextConfig {
      * @return org.springframework.web.client.RestTemplate
      */
     @Bean
-    @LoadBalanced
+//    @LoadBalanced
     public RestTemplate getRestTemplate() {
         return new RestTemplate();
     }

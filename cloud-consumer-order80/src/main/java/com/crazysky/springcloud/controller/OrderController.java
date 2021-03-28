@@ -2,13 +2,19 @@ package com.crazysky.springcloud.controller;
 
 import com.crazysky.springcloud.entities.CommonResult;
 import com.crazysky.springcloud.entities.Payment;
+import com.crazysky.springcloud.lb.LoadBalancer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
 
 /**
  * 订单服务访问控制类
@@ -25,6 +31,12 @@ public class OrderController {
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Resource
+    private LoadBalancer loadBalancer;
+
+    @Resource
+    private DiscoveryClient discoveryClient;
 
     /**
      * 增加支付信息
@@ -48,5 +60,23 @@ public class OrderController {
     @GetMapping(value = "/consumer/payment/get/{id}")
     public CommonResult<Payment> getPaymentById(@PathVariable("id") Long id) {
         return restTemplate.getForObject(PAYMENT_URL + "/payment/get/" + id, CommonResult.class);
+    }
+
+    /**
+     * 测试手写的负载均衡
+     * @author CrazySky
+     * @date 2021/03/28 15:55
+     * @param service 服务名称
+     * @return com.crazysky.springcloud.entities.CommonResult<java.lang.String>
+     */
+    @GetMapping(value = "/consumer/payment/lb/{service}")
+    public CommonResult<String> lb(@PathVariable("service") String service) {
+        List<ServiceInstance> instances = discoveryClient.getInstances(service);
+        if (instances == null || instances.size() < 0) {
+            return new CommonResult(444, "获取注册中心注册服务的实例信息失败");
+        }
+        ServiceInstance serviceInstance = loadBalancer.instances(instances);
+        URI uri = serviceInstance.getUri();
+        return restTemplate.getForObject(uri + "/payment/lb", CommonResult.class);
     }
 }

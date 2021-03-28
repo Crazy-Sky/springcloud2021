@@ -95,4 +95,15 @@ public class PaymentController {
         }
         return new CommonResult(444, "查询注册中心注册服务的实例信息失败");
     }
+
+    /**
+     * 测试手写的负载均衡
+     * @author CrazySky
+     * @date 2021/03/28 15:57
+     * @return com.crazysky.springcloud.entities.CommonResult<java.lang.String>
+     */
+    @GetMapping(value = "/payment/lb")
+    public CommonResult<String> lb() {
+        return new CommonResult(200, "测试成功", serverPort);
+    }
 }
